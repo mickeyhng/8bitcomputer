@@ -1,0 +1,39 @@
+module control (sigadd, sigaddi, signand, sigxor, sigor, sigslt, sigreset, sigdestinator, sigretrieve, sigbranch, sigjump, sigstack, sigglobal, sigwrite, sigload, sighlt, a[3], a[2], a[1], a[0], mytictoc, acc[7:0], tem[7:0]);
+	output sigadd, sigaddi, signand, sigxor, sigor, sigslt, sigreset;
+	output sigdestinator;
+	output sigretrieve;
+	output sigbranch, sigjump;
+	output sigstack, sigglobal, sigwrite, sigload;
+	output sighlt;
+	input [3:0] a;
+	input mytictoc;
+	input [7:0] acc;
+	input [7:0] tem;
+
+	wire [7:0] scana;
+	wire equal;
+
+	assign sigadd = (~a[3]) & (~a[2]) & (~a[1]) & (a[0]) & (~mytictoc);
+	assign sigaddi = (~a[3]) & (~a[2]) & (a[1]) & (~a[0]) & (~mytictoc);
+	assign signand = (~a[3]) & (a[2]) & (~a[1]) & (~a[0]) & (~mytictoc);
+	assign sigxor = (~a[3]) & (a[2]) & (~a[1]) & (a[0]) & (~mytictoc);
+	assign sigor = (~a[3]) & (a[2]) & (a[1]) & (~a[0]) & (~mytictoc);
+	assign sigslt = (~a[3]) & (a[2]) & (a[1]) & (a[0]) & (~mytictoc);
+	assign sigreset = (a[3]) & (a[2]) & (~a[1]) & (~a[0]) & (~mytictoc);
+
+	assign sigdestinator = (~a[3]) & (~a[2]) & (a[1]) & (a[0]) & (~mytictoc);
+	
+	assign sigretrieve = (a[3]) & (a[2]) & (~a[1]) & (~a[0]) & (mytictoc);
+
+	assign sigbranch = (a[3]) & (a[2]) & (a[1] ^ a[0]) & (mytictoc);
+	assign scana = acc ~^ tem;
+	assign equal = scana[7] * scana[6] * scana[5] * scana[4] * scana[3] * scana[2] * scana[1] * scana[0];
+	assign sigjump = (a[3]) & (a[2]) & (((~a[1]) & (a[0]) & (equal)) | ((a[1]) & (~a[0]) & (~equal))) & (~mytictoc);
+
+	assign sigstack = (a[3]) & (~a[2]) & (~a[0]);
+	assign sigglobal = (a[3]) & (~a[2]) & (a[0]);
+	assign sigwrite = (a[3]) & (~a[2]) & (a[1]) & (~mytictoc);
+	assign sigload = (a[3]) & (~a[2]) & (~a[1]) & (~mytictoc);
+
+	assign sighlt = (a[3]) & (a[2]) & (a[1]) & (a[0]);
+endmodule

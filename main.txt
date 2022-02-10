@@ -1,0 +1,91 @@
+module main ();
+	
+	reg tictoc = 1'b0;
+	
+	wire [7:0] J;
+	
+	wire [7:0] C;
+	
+	wire [7:0] S;
+	
+	wire [7:0] G;
+	
+	wire [7:0] R;
+	
+	wire [7:0] M;
+	
+	wire [7:0] I;
+	
+	wire [7:0] K;
+	
+	wire [7:0] T0;
+	
+	wire [7:0] T1;
+	
+	wire [7:0] T2;
+	
+	wire [7:0] T3;
+	
+	wire [7:0] T4;
+	
+	wire [7:0] T5;
+	
+	wire [7:0] T6;
+	
+	wire [7:0] T7;
+	
+	wire [7:0] T8;
+	
+	wire [7:0] T9;
+	
+	wire [7:0] T10;
+	
+	wire [7:0] T11;
+	
+	wire aadd, aaddi, anand, axor, aor, aslt, areset, destinate, retrieve, branch, jump, stack, global, write, load, hlt;
+    
+	wire mytictoc;
+	wire [7:0] D;
+
+	pc realpc (C[7:0], tictoc, jump, J[7:0]);
+	
+	memory realmemory (D[7:0], M[7:0], write, stack, global, C[7:0], S[7:0], G[7:0], R[7:0]);
+	
+	instructholder realinstructholder (I[7], I[6], I[5], I[4], I[3], I[2], I[1], I[0], mytictoc, tictoc, D[7:0]);
+	
+	control realcontrol (aadd, aaddi, anand, axor, aor, aslt, areset, destinate, retrieve, branch, jump, stack, global, write, load, hlt, I[7], I[6], I[5], I[4], mytictoc, K[7:0], R[7:0]);
+	
+	registers realregisters (T0[7:0], T1[7:0], T2[7:0], T3[7:0], T4[7:0], T5[7:0], T6[7:0], T7[7:0], T8[7:0], T9[7:0], T10[7:0], T11[7:0], R[7:0], S[7:0], G[7:0], retrieve, K[7:0], I[3], I[2], I[1], I[0], branch, C[7:0], load, M[7:0]);
+	
+	accumulator realaccumulator (K[7:0], R[7:0], I[3], I[2], I[1], I[0], aadd, aaddi, anand, axor, aor, aslt, areset);
+	
+	destinator realdestinator (J[7:0], destinate, R[7:0]);
+	
+	
+	initial
+		begin
+			$dumpfile ("dump.vcd");
+			$dumpvars (0, main);
+		end
+
+	always #1
+		
+		begin
+			
+			tictoc <= ~tictoc;
+			
+			$monitor ("time:%b I0:%b I1:%b I2:%b I3:%b I4:%b I5:%b I6:%b I7:%b I8:%b I9:%b I10:%b I11:%b", tictoc, T0[7:0], T1[7:0], T2[7:0], T3[7:0], T4[7:0], T5[7:0], T6[7:0], T7[7:0], T8[7:0], T9[7:0], T10[7:0], T11[7:0]);
+			
+			if (hlt)
+				
+				begin
+					
+					$display ("time to stop");
+					
+					$finish;
+				
+				end
+		
+		end
+
+endmodule

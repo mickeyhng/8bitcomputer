@@ -1,0 +1,22 @@
+module pc(q [7:0], tictoc, jump, d [7:0]);
+	output reg [7:0] q;
+	input tictoc, jump;
+	input [7:0] d;
+
+	reg [7:0] one = 8'b00000001;
+
+	initial 
+		begin
+			q = 8'b00000000;
+		end
+
+	always @ (posedge tictoc)
+		begin
+			 q <= q + one;
+		end
+
+    	always @ (posedge jump)
+		begin
+		    q <= d;
+		end
+endmodule

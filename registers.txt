@@ -1,0 +1,69 @@
+module registers (T0[7:0], T1[7:0], T2[7:0], T3[7:0], T4[7:0], T5[7:0], T6[7:0], T7[7:0], T8[7:0], T9[7:0], T10[7:0], T11[7:0], q[7:0], sp[7:0],  dp[7:0], retrieve, d[7:0], a[3], a[2], a[1], a[0], branch, counter[7:0], load, m[7:0]);
+	output [7:0] T0;
+	output [7:0] T1;
+	output [7:0] T2;
+	output [7:0] T3;
+	output [7:0] T4;
+	output [7:0] T5;
+	output [7:0] T6;
+	output [7:0] T7;
+	output [7:0] T8;
+	output [7:0] T9;
+	output [7:0] T10;
+	output [7:0] T11;
+	output [7:0] q;
+	output [7:0] sp;
+	output [7:0] dp;
+	input retrieve;
+	input [7:0] d;
+	input [3:0] a;
+	input branch;
+	input [7:0] counter;
+	input load;
+	input [7:0] m;
+
+	reg [7:0] ramem [0:15];
+	integer i;
+	wire [3:0] addr;
+	reg [7:0] two = 8'b00000010;
+
+   	initial 
+		begin
+			for (i = 0; i < 16; i = i + 1)
+				begin
+					ramem [i] <= 8'b00000000;
+				end
+		end
+
+	assign addr = a;
+	assign q = ramem [addr];
+	assign sp = ramem [2];
+	assign dp = ramem [3];
+	assign T0 = ramem [4];
+	assign T1 = ramem [5];
+	assign T2 = ramem [6];
+	assign T3 = ramem [7];
+	assign T4 = ramem [8];
+	assign T5 = ramem [9];
+	assign T6 = ramem [10];
+	assign T7 = ramem [11];
+	assign T8 = ramem [12];
+	assign T9 = ramem [13];
+	assign T10 = ramem [14];
+	assign T11 = ramem [15];
+
+	always @ (posedge retrieve)
+		begin
+			ramem [addr] <= d;
+		end
+
+	always @ (posedge branch)
+		begin
+			ramem [1] <= counter - two;
+		end
+
+	always @ (posedge load)
+		begin
+			ramem [addr] <= m;
+		end
+endmodule

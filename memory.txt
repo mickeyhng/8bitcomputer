@@ -1,0 +1,48 @@
+module memory (i[7:0], q[7:0], write, stack, global, counter[7:0], sp[7:0], dp[7:0], d[7:0]);
+	output [7:0] i;
+	output [7:0] q;
+	input write, stack, global;
+	input [7:0] counter;
+	input [7:0] sp;
+	input [7:0] dp;
+	input [7:0] d;
+
+	reg [7:0] romem [0:1023];
+	wire [9:0] addr;
+	wire instruct;
+	wire [9:0] addr2;
+
+	initial
+		begin
+			$readmemb ("asm/instruction.abin", romem);
+		end
+
+	assign instruct = (~global) & (~stack);
+	assign addr [9] = (global) | (~stack);
+	assign addr [8] = instruct;
+	assign addr [7] = instruct * counter [7] + stack * sp [7] + global * dp [7];
+	assign addr [6] = instruct * counter [6] + stack * sp [6] + global * dp [6];
+	assign addr [5] = instruct * counter [5] + stack * sp [5] + global * dp [5];
+	assign addr [4] = instruct * counter [4] + stack * sp [4] + global * dp [4];
+	assign addr [3] = instruct * counter [3] + stack * sp [3] + global * dp [3];
+	assign addr [2] = instruct * counter [2] + stack * sp [2] + global * dp [2];
+	assign addr [1] = instruct * counter [1] + stack * sp [1] + global * dp [1];
+	assign addr [0] = instruct * counter [0] + stack * sp [0] + global * dp [0];
+	assign q = romem [addr];
+	assign addr2 [9] = 1'b1;
+	assign addr2 [8] = 1'b1;
+	assign addr2 [7] = addr [7];
+	assign addr2 [6] = addr [6];
+	assign addr2 [5] = addr [5];
+	assign addr2 [4] = addr [4];
+	assign addr2 [3] = addr [3];
+	assign addr2 [2] = addr [2];
+	assign addr2 [1] = addr [1];
+	assign addr2 [0] = addr [0];
+	assign i = romem [addr2];
+
+	always @ (posedge write)
+		begin
+			romem [addr] <= d;
+		end
+endmodule

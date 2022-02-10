@@ -1,0 +1,68 @@
+module accumulator (q[7:0], d[7:0], r[3], r[2], r[1], r[0], sigadd, sigaddi, signand, sigxor, sigor, sigslt, sigreset);
+	output reg [7:0] q;
+	input [7:0] d;
+	input [3:0] r;
+	input sigadd, sigaddi, signand, sigxor, sigor, sigslt, sigreset; 
+
+	wire [7:0] intermediate;
+	reg [7:0] zero;
+	reg [7:0] one;
+
+   	initial 
+		begin
+			q = 8'b00000000;
+			zero = 8'b00000000;
+			one = 8'b00000001;
+		end
+
+	assign intermediate [7] = r [3];
+	assign intermediate [6] = r [3];
+	assign intermediate [5] = r [3];
+	assign intermediate [4] = r [3];
+	assign intermediate [3] = r [3];
+	assign intermediate [2] = r [2];
+	assign intermediate [1] = r [1];
+	assign intermediate [0] = r [0];
+
+	always @ (posedge sigadd)
+		begin
+			q <= q + d;
+		end
+
+	always @ (posedge sigaddi)
+		begin
+			q <= q + intermediate;
+		end
+
+	always @ (posedge signand)
+		begin
+			q <= ~(q & d);
+		end
+		
+	always @ (posedge sigxor)
+		begin
+			q <= q ^ d;
+		end
+
+	always @ (posedge sigor)
+		begin
+			q <= q | d;
+		end
+
+	always @ (posedge sigslt)
+		begin
+			if (q < d)
+				begin
+					q <= one;
+				end
+			else
+				begin
+					q <= zero;
+				end
+		end
+
+	always @ (posedge sigreset)
+		begin
+			q <= zero;
+		end
+endmodule
